@@ -1,35 +1,35 @@
 package scraper
 
 import (
-	"fmt"
 	"github.com/gocolly/colly"
+	"github.com/gocolly/colly/extensions"
 )
 
 type Content struct {
-	url      string
-	headline string
-	text     string
+	URL      string
+	Headline string
 }
 
 func GetHackerNews() ([]Content, error) {
 	var allContents []Content
-	fmt.Println("running...")
-	getData()
-	fmt.Println("done")
+	getData(&allContents)
 	return allContents, nil
 }
 
-func getData() {
+func getData(allContents *[]Content) {
+
+	// Instantiate default collector
 	c := colly.NewCollector()
+	extensions.RandomUserAgent(c)
 
-	// Find and visit all links
-	c.OnHTML("a", func(e *colly.HTMLElement) {
-		e.Request.Visit(e.Attr("href"))
+	// On every a element which has href attribute call callback
+	c.OnHTML("a[href].storylink", func(e *colly.HTMLElement) {
+		link := e.Attr("href")
+		if len(link) > 0 && len(e.Text) > 0 {
+			*allContents = append(*allContents, Content{URL: link, Headline: e.Text})
+		}
 	})
 
-	c.OnRequest(func(r *colly.Request) {
-		fmt.Println("Visiting", r.URL)
-	})
-
-	c.Visit("http://go-colly.org/")
+	// Start scraping on https://hackerspaces.org
+	c.Visit("https://news.ycombinator.com/")
 }
