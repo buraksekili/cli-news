@@ -7,7 +7,7 @@ cli-news is a Hacker news scraper to display popular headlines of Hacker news wi
 ## Usage
 ```
 go build main.go
-./main.go
+./main
 ```
 or
 ```
