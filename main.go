@@ -12,7 +12,7 @@ func main() {
 
 	templates := &promptui.SelectTemplates{
 		Label:    "{{ . }}?",
-		Active:   " {{ .Headline | green | bold }} ",
+		Active:   "> {{ .Headline | green | bold }} ",
 		Inactive: " {{ .Headline | white }} ",
 		Selected: "	{{ .Headline | green | cyan }}",
 		Details: `
