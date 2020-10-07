@@ -4,34 +4,36 @@ import (
 	"fmt"
 	"github.com/buraksekili/cli-news/scraper"
 	"github.com/manifoldco/promptui"
+	"strings"
 )
 
 func main() {
 	allContents, _ := scraper.GetHackerNews()
-	m := make(map[string]string)
-	for _, content := range allContents {
-		m[content.Headline] = content.URL
-		fmt.Printf("Headline: %s\nLink: %s\n\n", content.Headline, content.URL)
-	}
 
-	keys := make([]string, len(m))
-	i := 0
-	for key, _ := range m {
-		keys[i] = key
-		i++
+	templates := &promptui.SelectTemplates{
+		Label:    "{{ . }}?",
+		Active:   " {{ .Headline | green | bold }} ",
+		Inactive: " {{ .Headline | white }} ",
+		Selected: "	{{ .Headline | green | cyan }}",
+		Details: `
+	--------- News ----------
+	{{ "Headline:" | faint }}	{{ .Headline }}
+	{{ "URL:" | faint }}	{{ .URL}}`,
 	}
 
 	prompt := promptui.Select{
-		Label: "Select News ('q' to quit)",
-		Items: keys,
+		Label:     "Select News",
+		Items:     allContents,
+		Size:      10,
+		Templates: templates,
 	}
 
 	_, result, err := prompt.Run()
-
 	if err != nil {
 		fmt.Printf("Prompt failed %v\n", err)
 		return
 	}
 
-	fmt.Printf("You choose: %q\nLink: %s\n", result, m[result])
+	i := strings.Index(result, " ")
+	fmt.Printf("\nYou choose: %q\nLink: %s\n", result[i+1:len(result)-1], result[1:i])
 }
