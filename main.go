@@ -2,13 +2,11 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"strings"
-
-	"github.com/buraksekili/cli-news/scraper"
 	"github.com/fatih/color"
 	"github.com/manifoldco/promptui"
 	"github.com/mmcdole/gofeed"
+	"os"
+	"strings"
 )
 
 type Content struct {
@@ -17,6 +15,7 @@ type Content struct {
 }
 
 func main() {
+	fmt.Println("golang")
 	validFlag, cont := parseFlag()
 	if !validFlag || !cont {
 		os.Exit(1)
@@ -29,7 +28,6 @@ func main() {
 	m := make(map[string]string)
 	itemsArr := feed.Items
 	contentArr := make([]Content, len(itemsArr))
-
 
 	for i := 0; i < len(itemsArr); i++ {
 		if itemsArr[i] != nil {
@@ -46,11 +44,14 @@ func main() {
 		--------- News ----------
 		{{ "Headline:" | faint }}	{{ .Headline }}
 		{{ "Link:" | faint }}	{{ .URL}}`,
+		Help: " ",
+		// delete default help text
+		// as indicated in https://github.com/manifoldco/promptui/blob/981a3cab68f6f3481bf42c6a98521af7fbd14fae/select.go#L472
 	}
 
 	prompt := promptui.Select{
-		Label: "Select News",
-		Items: contentArr,
+		Label:     "Select News",
+		Items:     contentArr,
 		Templates: templates,
 		Size:      10,
 	}
@@ -80,7 +81,7 @@ func parseFlag() (bool, bool) {
 
 	var op string = flags[0]
 	if op == "-h" || op == "--help" {
-		scraper.PrintHelp(os.Stdout)
+		PrintHelp(os.Stdout)
 		return true, false
 	}
 
