@@ -15,4 +15,4 @@ go run main.go
 ```
 
 ## Dependencies
-Just [Golang](https://golang.org/)  (Preferably Go 1.13 or newer). Other dependencies indicated in .mod file.
+Just [Golang](https://golang.org/)  (Preferably Go 1.13 or newer). 
