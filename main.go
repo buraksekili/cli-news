@@ -15,7 +15,6 @@ type Content struct {
 }
 
 func main() {
-	fmt.Println("golang")
 	validFlag, cont := parseFlag()
 	if !validFlag || !cont {
 		os.Exit(1)
@@ -37,7 +36,7 @@ func main() {
 	}
 
 	templates := &promptui.SelectTemplates{
-		Label:    "{{ . }}?",
+		Label:    "{{ . }}",
 		Active:   "> {{ .Headline | green | bold }} ",
 		Inactive: " {{ .Headline | white }} ",
 		Details: `
