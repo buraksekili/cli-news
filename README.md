@@ -6,12 +6,12 @@ cli-news is a Hacker news scraper to display popular headlines of Hacker news wi
 
 ## Usage
 ```
-go build main.go
-./main
+go build 
+./cli-news
 ```
 or
 ```
-go run main.go
+go run *.go
 ```
 
 ## Dependencies
