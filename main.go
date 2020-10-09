@@ -2,12 +2,19 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"strings"
+
 	"github.com/buraksekili/cli-news/scraper"
 	"github.com/fatih/color"
 	"github.com/manifoldco/promptui"
-	"os"
-	"strings"
+	"github.com/mmcdole/gofeed"
 )
+
+type Content struct {
+	URL      string
+	Headline string
+}
 
 func main() {
 	validFlag, cont := parseFlag()
@@ -15,27 +22,41 @@ func main() {
 		os.Exit(1)
 	}
 
-	allContents, _ := scraper.GetHackerNews()
+	fp := gofeed.NewParser()
+	var URL string = "https://news.ycombinator.com/rss"
+	feed, _ := fp.ParseURL(URL)
+
+	m := make(map[string]string)
+	itemsArr := feed.Items
+	contentArr := make([]Content, len(itemsArr))
+
+
+	for i := 0; i < len(itemsArr); i++ {
+		if itemsArr[i] != nil {
+			m[strings.Trim(itemsArr[i].Title, " ")] = itemsArr[i].Link
+			contentArr[i] = Content{Headline: itemsArr[i].Title, URL: itemsArr[i].Link}
+		}
+	}
 
 	templates := &promptui.SelectTemplates{
 		Label:    "{{ . }}?",
 		Active:   "> {{ .Headline | green | bold }} ",
 		Inactive: " {{ .Headline | white }} ",
-		Selected: "	{{ .Headline | green | cyan }}",
 		Details: `
-	--------- News ----------
-	{{ "Headline:" | faint }}	{{ .Headline }}
-	{{ "URL:" | faint }}	{{ .URL}}`,
+		--------- News ----------
+		{{ "Headline:" | faint }}	{{ .Headline }}
+		{{ "Link:" | faint }}	{{ .URL}}`,
 	}
 
 	prompt := promptui.Select{
-		Label:     "Select News",
-		Items:     allContents,
-		Size:      10,
+		Label: "Select News",
+		Items: contentArr,
 		Templates: templates,
+		Size:      10,
 	}
 
 	_, result, err := prompt.Run()
+
 	if err != nil {
 		fmt.Printf("Prompt failed %v\n", err)
 		return
